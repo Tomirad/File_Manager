@@ -92,7 +92,7 @@ def dir_show_elements(path):
         i += 1
         dir_element(i, obj.name, len_max_count_number, get_icon_element(obj))
         elements.append(obj)
-    txt_element(symbols[4], 'Wybierz numer pliku:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+    txt_element(symbols[4], 'Choose file:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     return elements
 
 file_name = False
@@ -100,20 +100,18 @@ while True:
     system('cls')
     dir_path = '/'.join(dir_table)
     print(dir_table)
-    print(f"{symbols[9]} Ścieżka startowa:")
+    print(f"{symbols[9]} Start a path directory:")
     print(symbols[0], dir_path)
 
     if not file_name == False:
         file = open(dir_path)
-        txt_element(symbols[4], 'Wybierz komendę [0 - wyjście]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+        txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     else:
         dir_elements = dir_show_elements(dir_path)
 
     file_name = False   
     key_file = input('') or -1
     
-    # print('Wybrany numer: ', key_file)
-    # time.sleep(2)
     if not key_file.isnumeric() or int(key_file) <= -1:
         exit('Close Program > exit')
  
@@ -129,7 +127,3 @@ while True:
             file_name = dir_elements[key].name
             dir_table.append(file_name)
         print(dir_elements[key])
-    
-
-
-    
