@@ -5,6 +5,11 @@ import time
 def replace(str):
    return str.replace('\\', '/')
 
+def implode(arr, sep = '/'):
+    if len(arr) <= 1:
+        arr = arr + ['']
+    return sep.join(arr)
+
 imageList = ['svg', 'jpg', 'gif', 'png', 'webp', 'jpeg', 'bmp', 'raw']
 textList = ['txt', 'ini', 'inf', 'conf', 'cfg']
 logList = ['log']
@@ -44,16 +49,26 @@ elementEmoji = {
     'K': '\U0001F512',
 }
 
-dir_path = replace("C:\Temp")
+path_src = replace("C:/Windows.old/Users/")
 if len(argv) > 1:
-    dir_path = replace(argv[1])
+    path_src = replace(argv[1])
 
-dir_table = []
-for de in dir_path.split('/'):
-    if not de == '':
-        dir_table.append(de)
+path_list = []
+for particle in path_src.split('/'):
+    if not particle == '':
+        path_list.append(particle)
 
-dir_path = '/'.join(dir_table)
+def check_directory(src_path, tmp):
+    try:
+        scandir(src_path)
+    except PermissionError:
+        print(symbols[0], "❌  Brak dostępu do katalogu:", src_path)
+    except FileNotFoundError:
+        print(symbols[0], "👻  Katalog nie istnieje:", src_path)
+    except Exception as e:
+        print(symbols[0], "💀  Wystąpił nieoczekiwany błąd:", e)
+    return tmp
+
 
 def get_icon_element(obj):
     symbol = symbols[2]
@@ -77,7 +92,7 @@ def txt_element(index, name, len, *args):
 
 
 def dir_count_file(path):
-    scan = scandir(path)
+    scan = scandir(implode(path))
     file_count = 0
     for obj in scan:
         file_count += 1
@@ -86,9 +101,11 @@ def dir_count_file(path):
 def dir_show_elements(path):
     i = 0
     elements = []
+    src_path = implode(path)
     len_max_count_number = dir_count_file(path)
-    dir_element(0, '..', len_max_count_number, elementEmoji['D'] or symbols[10])
-    for obj in scandir(path):
+    if len(path) > 1:
+        dir_element(0, '..', len_max_count_number, elementEmoji['D'] or symbols[10])
+    for obj in scandir(src_path):
         i += 1
         dir_element(i, obj.name, len_max_count_number, get_icon_element(obj))
         elements.append(obj)
@@ -96,18 +113,18 @@ def dir_show_elements(path):
     return elements
 
 file_name = False
+tmp_path_list = path_list
 while True:
-    system('cls')
-    dir_path = '/'.join(dir_table)
-    print(dir_table)
-    print(f"{symbols[9]} Start a path directory:")
-    print(symbols[0], dir_path)
-
+    # system('cls')
+    print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
+    path_list = check_directory(implode(path_list), tmp_path_list)
+    print(f" {symbols[8]} Start a path directory:")
+    print(symbols[0], implode(path_list))
     if not file_name == False:
-        file = open(dir_path)
+        file = open(implode(path_list))
         txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     else:
-        dir_elements = dir_show_elements(dir_path)
+        dir_elements = dir_show_elements(path_list)
 
     file_name = False   
     key_file = input('') or -1
@@ -117,13 +134,15 @@ while True:
  
     if int(key_file) == 0:
         print('Change Directory > cd ..')
-        dir_table = dir_table[:-1]
+        tmp_path_list = path_list
+        path_list = path_list[:-1]
     else:
         key = int(key_file) - 1
         if dir_elements[key].is_dir():
             print('Change Directory > cd', dir_elements[key].name)
-            dir_table.append(dir_elements[key].name)
+            tmp_path_list = list(path_list)
+            path_list.append(dir_elements[key].name)
         else:
             file_name = dir_elements[key].name
-            dir_table.append(file_name)
+            path_list.append(file_name)
         print(dir_elements[key])
