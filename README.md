@@ -1,8 +1,8 @@
 Simple tools manager & file manager
 
 1. Tools
-- read passwords from WLAN
-- read passowrds from Mikrotik Winbox
+- TODO - read passwords from WLAN
+- TODO - read passowrds from Mikrotik Winbox
 2. Simple File Manager
 
 > `python file_manager.py c:/Users/admin/AppData`
