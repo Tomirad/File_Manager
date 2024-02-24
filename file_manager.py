@@ -49,7 +49,7 @@ elementEmoji = {
     'K': '\U0001F512',
 }
 
-path_src = replace("C:/Windows.old/Users/")
+path_src = replace("C:/Users/Public")
 if len(argv) > 1:
     path_src = replace(argv[1])
 
@@ -60,7 +60,8 @@ for particle in path_src.split('/'):
 
 def check_directory(src_path, tmp):
     try:
-        scandir(src_path)
+        scandir(implode(src_path))
+        return src_path
     except PermissionError:
         print(symbols[0], "❌  Brak dostępu do katalogu:", src_path)
     except FileNotFoundError:
@@ -109,40 +110,46 @@ def dir_show_elements(path):
         i += 1
         dir_element(i, obj.name, len_max_count_number, get_icon_element(obj))
         elements.append(obj)
-    txt_element(symbols[4], 'Choose file:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+    txt_element(symbols[4], 'Choose file or directory:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     return elements
 
-file_name = False
-tmp_path_list = path_list
-while True:
-    # system('cls')
-    print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
-    path_list = check_directory(implode(path_list), tmp_path_list)
-    print(f" {symbols[8]} Start a path directory:")
-    print(symbols[0], implode(path_list))
-    if not file_name == False:
-        file = open(implode(path_list))
-        txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
-    else:
-        dir_elements = dir_show_elements(path_list)
-
-    file_name = False   
-    key_file = input('') or -1
-    
-    if not key_file.isnumeric() or int(key_file) <= -1:
-        exit('Close Program > exit')
- 
-    if int(key_file) == 0:
-        print('Change Directory > cd ..')
-        tmp_path_list = path_list
-        path_list = path_list[:-1]
-    else:
-        key = int(key_file) - 1
-        if dir_elements[key].is_dir():
-            print('Change Directory > cd', dir_elements[key].name)
-            tmp_path_list = list(path_list)
-            path_list.append(dir_elements[key].name)
+def main():
+    global path_list
+    file_name = False
+    tmp_path_list = path_list
+    while True:
+        # system('cls')
+        print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
+        path_list = check_directory(path_list, tmp_path_list)
+        print(f" {symbols[8]} Start a path directory:")
+        print(symbols[0], implode(path_list))
+        if not file_name == False:
+            file = open(implode(path_list))
+            txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
         else:
-            file_name = dir_elements[key].name
-            path_list.append(file_name)
-        print(dir_elements[key])
+            dir_elements = dir_show_elements(path_list)
+
+        file_name = False   
+        key_file = input('') or -1
+        
+        if not key_file.isnumeric() or int(key_file) <= -1:
+            print('Close Program > exit')
+            break
+
+        if int(key_file) == 0:
+            print('Change Directory > cd ..')
+            tmp_path_list = path_list
+            path_list = path_list[:-1]
+        else:
+            key = int(key_file) - 1
+            if dir_elements[key].is_dir():
+                print('Change Directory > cd', dir_elements[key].name)
+                tmp_path_list = list(path_list)
+                path_list.append(dir_elements[key].name)
+            else:
+                file_name = dir_elements[key].name
+                path_list.append(file_name)
+            print(dir_elements[key])
+
+if __name__ == '__main__':
+    main()
