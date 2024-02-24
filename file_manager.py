@@ -10,10 +10,28 @@ def implode(arr, sep = '/'):
         arr = arr + ['']
     return sep.join(arr)
 
+def save_last_pathsrc(src):
+    file = open('history.txt', 'w')
+    file.write(src)
+    file.close()
+
+def load_last_pathsrc():
+    try:
+        file = open('history.txt')
+        src = file.read()
+        file.close()
+        print(['path', src])
+        return None if src == '' else src
+    except FileNotFoundError:
+        print('history.txt not found!')
+        file = open('history.txt', 'w+')
+        file.close()
+    return None
+
 imageList = ['svg', 'jpg', 'gif', 'png', 'webp', 'jpeg', 'bmp', 'raw']
-textList = ['txt', 'ini', 'inf', 'conf', 'cfg']
+textList = ['txt', 'ini', 'inf', 'conf', 'cfg', 'md', 'env', 'htaccess', 'gitignore']
 logList = ['log']
-codeList = ['php', 'py', 'html', 'css', 'js', 'rsc']
+codeList = ['php', 'py', 'html', 'css', 'js', 'rsc', 'toml']
 mediaList = ['wav', 'mp3', 'mp4', 'avi', 'ogg', 'mp2']
 binList = ['bin', 'dll', 'dat']
 exeList = ['exe', 'msi']
@@ -49,7 +67,8 @@ elementEmoji = {
     'K': '\U0001F512',
 }
 
-path_src = replace("C:/Users/Public")
+last_pathsrc = load_last_pathsrc()
+path_src = replace("C:/Users/Public") if last_pathsrc == None else last_pathsrc
 if len(argv) > 1:
     path_src = replace(argv[1])
 
@@ -60,7 +79,6 @@ for particle in path_src.split('/'):
 
 def check_directory(src_path, tmp):
     try:
-        #if path.isdir(implode(src_path)):
         scandir(implode(src_path))
         return src_path
     except PermissionError:
@@ -91,7 +109,6 @@ def dir_element(index, name, len, fileIcon):
 
 def txt_element(index, name, len, *args):
     print(' {s1} {: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = args[0], s2 = args[1], s3 = args[2]))
-
 
 def dir_count_file(path):
     scan = scandir(implode(path))
@@ -124,13 +141,16 @@ def main():
         file_name = True
         if path.isdir(implode(path_list)):
             path_list = check_directory(path_list, tmp_path_list)
+            save_last_pathsrc(implode(path_list))
             print(f" {symbols[8]} Start a path directory:")
             print(symbols[0], implode(path_list))
             file_name = False
 
-        if not file_name == False:
-            file = open(implode(path_list))
-            print(f"{symbols[0]} File:", implode(path_list))
+        if file_name == True:
+            print('import file_reader;', path_list, implode(path_list))
+            import file_reader
+            file_reader.main(implode(path_list), [symbols[0]])
+            del file_reader
             txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
         else:
             dir_elements = dir_show_elements(path_list)
