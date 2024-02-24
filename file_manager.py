@@ -1,5 +1,5 @@
 from sys import argv
-from os import scandir, system
+from os import scandir, system, path
 import time
 
 def replace(str):
@@ -60,6 +60,7 @@ for particle in path_src.split('/'):
 
 def check_directory(src_path, tmp):
     try:
+        #if path.isdir(implode(src_path)):
         scandir(implode(src_path))
         return src_path
     except PermissionError:
@@ -120,16 +121,20 @@ def main():
     while True:
         system('cls')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
-        path_list = check_directory(path_list, tmp_path_list)
-        print(f" {symbols[8]} Start a path directory:")
-        print(symbols[0], implode(path_list))
+        file_name = True
+        if path.isdir(implode(path_list)):
+            path_list = check_directory(path_list, tmp_path_list)
+            print(f" {symbols[8]} Start a path directory:")
+            print(symbols[0], implode(path_list))
+            file_name = False
+
         if not file_name == False:
             file = open(implode(path_list))
+            print(f"{symbols[0]} File:", implode(path_list))
             txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
         else:
             dir_elements = dir_show_elements(path_list)
-
-        file_name = False   
+  
         key_file = input('') or -1
         
         if not key_file.isnumeric() or int(key_file) <= -1:
