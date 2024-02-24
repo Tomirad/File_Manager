@@ -149,9 +149,14 @@ def main():
         if file_name == True:
             print(f'{symbols[0]} import file_reader;', implode(path_list))
             txt_element('', symbols[2] * 78, 0, symbols[1], '', symbols[3])
-            import file_reader
-            file_reader.main(implode(path_list), [symbols[0]])
-            del file_reader
+            if path_list[-1] == 'Addresses.cdb':
+                import mikrotik_addressbook as mt
+                mt.main(implode(path_list), [symbols[0]])
+                del mt
+            else:
+                import file_reader as fr
+                fr.main(implode(path_list), [symbols[0]])
+                del fr
             #txt_element(symbols[4], 'Choose [x,q - exit, c - close]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
             menu_fm = '0'
         else:
