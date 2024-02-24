@@ -5,7 +5,7 @@ def main(src_path, images = [], limit = 10):
     max_limit = count + 1
     while True:
         row = []
-        line = 0
+        limit = max_limit if limit > max_limit else limit
         print('Current Limit:', limit, 'Max:', max_limit)
         with open(src_path, encoding='utf8', errors='ignore') as content:
             row = [next(content) for _ in range(limit)]
