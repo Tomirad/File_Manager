@@ -118,7 +118,7 @@ def main():
     file_name = False
     tmp_path_list = path_list
     while True:
-        # system('cls')
+        system('cls')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
         path_list = check_directory(path_list, tmp_path_list)
         print(f" {symbols[8]} Start a path directory:")
