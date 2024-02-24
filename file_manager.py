@@ -50,7 +50,7 @@ groupList = {
     'K': keyList
 }
 
-symbols = ['═╡', ' ├─ ', '─', '─┤', '□', '▪', '└─', '─┘', '│', ' ┬', '⌂', '☼']
+symbols = ['═╡', '├─ ', '─', '─┤', '□', '▪', '└─', '─┘', '│', ' ┬', '⌂', '☼']
 elementSymbol = {'D': '⌂', 'I': '☼', 'T': '₸', 'M': '♫', 'B': '▒', 'X': '█', 'Z': 'Z'}
 elementEmoji = {
     '.': '\U0001F0CF',
@@ -105,7 +105,7 @@ def get_icon_element(obj):
     return symbol
 
 def dir_element(index, name, len, fileIcon):
-    print('{s1}{: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = symbols[1], s2 = fileIcon, s3 = symbols[3]))
+    print(' {s1}{: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = symbols[1], s2 = fileIcon, s3 = symbols[3]))
 
 def txt_element(index, name, len, *args):
     print(' {s1} {: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = args[0], s2 = args[1], s3 = args[2]))
@@ -147,26 +147,29 @@ def main():
             file_name = False
 
         if file_name == True:
-            print('import file_reader;', path_list, implode(path_list))
+            print(f'{symbols[0]} import file_reader;', implode(path_list))
+            txt_element('', symbols[2] * 78, 0, symbols[1], '', symbols[3])
             import file_reader
             file_reader.main(implode(path_list), [symbols[0]])
             del file_reader
-            txt_element(symbols[4], 'Choose [0 - exit]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+            #txt_element(symbols[4], 'Choose [x,q - exit, c - close]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+            menu_fm = '0'
         else:
             dir_elements = dir_show_elements(path_list)
-  
-        key_file = input('') or -1
+            menu_fm = input('') or '-1'
         
-        if not key_file.isnumeric() or int(key_file) <= -1:
+        print('menu_fm', menu_fm)
+
+        if not menu_fm.isnumeric() or int(menu_fm) <= -1:
             print('Close Program > exit')
             break
 
-        if int(key_file) == 0:
+        if int(menu_fm) == 0:
             print('Change Directory > cd ..')
             tmp_path_list = path_list
             path_list = path_list[:-1]
         else:
-            key = int(key_file) - 1
+            key = int(menu_fm) - 1
             if dir_elements[key].is_dir():
                 print('Change Directory > cd', dir_elements[key].name)
                 tmp_path_list = list(path_list)
