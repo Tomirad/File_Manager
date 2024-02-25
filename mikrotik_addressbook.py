@@ -4,7 +4,7 @@ def replace(content, character = ''):
         content = content.replace(chr(char), character)
     return content
 
-def main(src_path, images = [], limit = 10):
+def main(src_path, images = []):
     with open(src_path, 'r', errors='ignore') as fp:
         for count, line in enumerate(fp):
             pass
@@ -12,24 +12,28 @@ def main(src_path, images = [], limit = 10):
     modeWorking = 'r'
     while True:
         row = []
-        limit = max_limit if limit > max_limit else limit
-        print('Current Limit:', limit, 'Max:', max_limit, 'Mode:', modeWorking)
+        print('Current Limit:', 'Limit:', max_limit, 'Mode:', modeWorking)
         with open(src_path, encoding='utf8', errors='ignore', mode=modeWorking) as content:
-            row = [next(content) for _ in range(limit)]
-        row3 = []       
+            row = [next(content) for _ in range(max_limit)]
+
+        newrows = []      
         for line in row:
-            row3.append(replace(line))
+            newrows.append(replace(line))
 
-        longline = ''.join(row3)
+        longline = ''.join(newrows)
         splitlist = longline.split('!')
-
+        m2 = []
         for e in splitlist:
-            hexList = ['\x00', '\x08', '\x04', '\x03', '\x02', '\x01', '\x00', '\x07', '\x06', '\x09','\x05' ]
-            for c in range(0,10):
-                e.replace(chr(c), '')
-            print(e)
+            for c in range(0, 10):
+                e = e.replace(chr(c), ' ')
+            m2.append(e)
 
-        choose = input('Choose [c - close; 0 - all lines; 1-n - limit lines (default: 10)]: ')
+        longline = ''.join(m2)
+        splitlist = longline.split('M2')
+        for m in splitlist:
+            print(m)
+
+        choose = input('Choose [c - close]: ')
 
         if choose.isnumeric():
             choose_limit = int(choose)
