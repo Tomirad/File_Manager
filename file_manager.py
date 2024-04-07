@@ -2,7 +2,7 @@ from sys import argv
 from os import scandir, system, path
 from ctypes import windll
 
-import time, string
+import string
 
 def replace(str):
    return str.replace('\\', '/')
@@ -125,7 +125,6 @@ def dir_count_file(dir_path):
         for obj in scan:
             file_count += 1
     return len(str(file_count))
-    
 
 def get_drives():
     drives = []
@@ -166,7 +165,7 @@ def main():
     tmp_path_list = path_list
     drive_list = False
     while True:
-        #system('cls')
+        system('cls')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
         file_name = True
         if path.isdir(implode(path_list)):
@@ -200,8 +199,6 @@ def main():
             dir_elements = dir_show_elements(path_list)
             menu_fm = input('') or '-1'
                     
-        print('menu_fm', menu_fm,          drive_list)
-
         if not menu_fm.isnumeric() or int(menu_fm) <= -1:
             print('Close Program > exit', f"[{menu_fm}]")
             break
@@ -211,7 +208,6 @@ def main():
             tmp_path_list = path_list
             letter = str(get_drives().__getitem__(int(menu_fm) - 1) + ":")
             path_list.append(letter)
-            print(path_list)
             
         elif int(menu_fm) <= 0:
             print('Change Directory > cd ..', f"[{menu_fm}]")
