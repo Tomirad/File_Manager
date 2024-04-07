@@ -1,6 +1,8 @@
 from sys import argv
 from os import scandir, system, path
-import time
+from ctypes import windll
+
+import time, string
 
 def replace(str):
    return str.replace('\\', '/')
@@ -65,6 +67,7 @@ elementEmoji = {
     'X': '\N{video game}', #'\U00002699',
     'Z': '\N{package}',
     'K': '\U0001F512',
+    'B': '\N{card file box} '
 }
 
 last_pathsrc = load_last_pathsrc()
@@ -92,6 +95,8 @@ def check_directory(src_path, tmp):
 
 def get_icon_element(obj):
     symbol = symbols[2]
+    typeObj = type(obj)
+
     if obj.is_dir():
         return elementEmoji['D'] or symbols[10]
     elif obj.is_file():
@@ -104,52 +109,85 @@ def get_icon_element(obj):
         return icon
     return symbol
 
+def get_icon_element_for_disk():
+    return elementEmoji['B'] or symbols[10]
+
 def dir_element(index, name, len, fileIcon):
     print(' {s1}{: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = symbols[1], s2 = fileIcon, s3 = symbols[3]))
 
 def txt_element(index, name, len, *args):
     print(' {s1} {: >{n}} {s2} {: <{m}} {s3}'.format(index, name, n = len, m = 48, s1 = args[0], s2 = args[1], s3 = args[2]))
 
-def dir_count_file(path):
-    scan = scandir(implode(path))
+def dir_count_file(dir_path):
     file_count = 0
-    for obj in scan:
-        file_count += 1
+    if path.isdir(implode(dir_path)):
+        scan = scandir(implode(dir_path))
+        for obj in scan:
+            file_count += 1
     return len(str(file_count))
+    
 
-def dir_show_elements(path):
+def get_drives():
+    drives = []
+    bitmask = windll.kernel32.GetLogicalDrives()
+    for letter in string.ascii_uppercase:
+        if bitmask & 1:
+            drives.append(letter)
+        bitmask >>= 1
+    return drives
+
+def dir_show_elements(dir_path):
     i = 0
     elements = []
-    src_path = implode(path)
-    len_max_count_number = dir_count_file(path)
-    if len(path) > 1:
-        dir_element(0, '..', len_max_count_number, elementEmoji['D'] or symbols[10])
-    for obj in scandir(src_path):
-        i += 1
-        dir_element(i, obj.name, len_max_count_number, get_icon_element(obj))
-        elements.append(obj)
-    txt_element(symbols[4], 'Choose file or directory:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+    src_path = implode(dir_path)
+    if path.isdir(src_path):
+        len_max_count_number = dir_count_file(dir_path)
+        if len(dir_path) > 1:
+            dir_element(0, '..', len_max_count_number, elementEmoji['D'] or symbols[10])
+
+        for obj in scandir(src_path):
+            i += 1
+            dir_element(i, obj.name, len_max_count_number, get_icon_element(obj))
+            elements.append(obj)
+        txt_element(symbols[4], 'Choose file or directory:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
+    else:
+        len_max_count_number = len(get_drives())
+        for letter in get_drives():
+            i += 1
+            dir_element(i, letter, len_max_count_number, get_icon_element_for_disk())
+            elements.append(letter)
+        txt_element(symbols[4], 'Choose letter:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     return elements
+
 
 def main():
     global path_list
     file_name = False
     tmp_path_list = path_list
+    drive_list = False
     while True:
-        system('cls')
+        #system('cls')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
         file_name = True
         if path.isdir(implode(path_list)):
             path_list = check_directory(path_list, tmp_path_list)
             save_last_pathsrc(implode(path_list))
+            level = len(path_list)
             print(f" {symbols[8]} Start a path directory:")
             print(symbols[0], implode(path_list))
             file_name = False
+            drive_list = False
+        elif not path.isfile(implode(path_list)):
+            print(f" {symbols[8]} Start a choose letter disk:")
+            file_name = False
+            drive_list = True
 
         if file_name == True:
-            print(f'{symbols[0]} import file_reader;', implode(path_list))
+            print(f'{symbols[0]} implode(path_list) =>', implode(path_list), path_list)
             txt_element('', symbols[2] * 78, 0, symbols[1], '', symbols[3])
-            if path_list[-1] == 'Addresses.cdb':
+            if len(path_list) == 0 or not path.isfile(implode(path_list)):
+                pass
+            elif path_list[-1] == 'Addresses.cdb':
                 import mikrotik_addressbook as mt
                 mt.main(implode(path_list), [symbols[0]])
                 del mt
@@ -157,32 +195,37 @@ def main():
                 import file_reader as fr
                 fr.main(implode(path_list), [symbols[0]])
                 del fr
-            #txt_element(symbols[4], 'Choose [x,q - exit, c - close]:', 30, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
             menu_fm = '0'
         else:
             dir_elements = dir_show_elements(path_list)
             menu_fm = input('') or '-1'
-        
-        print('menu_fm', menu_fm)
+                    
+        print('menu_fm', menu_fm,          drive_list)
 
         if not menu_fm.isnumeric() or int(menu_fm) <= -1:
-            print('Close Program > exit')
+            print('Close Program > exit', f"[{menu_fm}]")
             break
 
-        if int(menu_fm) == 0:
-            print('Change Directory > cd ..')
+        if drive_list is True:
+            print('Change Drive:', f"[{menu_fm}]")
+            tmp_path_list = path_list
+            letter = str(get_drives().__getitem__(int(menu_fm) - 1) + ":")
+            path_list.append(letter)
+            print(path_list)
+            
+        elif int(menu_fm) <= 0:
+            print('Change Directory > cd ..', f"[{menu_fm}]")
             tmp_path_list = path_list
             path_list = path_list[:-1]
         else:
             key = int(menu_fm) - 1
             if dir_elements[key].is_dir():
-                print('Change Directory > cd', dir_elements[key].name)
+                print('Change Directory > cd', f"[{menu_fm}]", dir_elements[key].name)
                 tmp_path_list = list(path_list)
                 path_list.append(dir_elements[key].name)
             else:
                 file_name = dir_elements[key].name
                 path_list.append(file_name)
-            print(dir_elements[key])
 
 if __name__ == '__main__':
     main()
