@@ -187,15 +187,15 @@ def main():
             if len(path_list) == 0 or not path.isfile(implode(path_list)):
                 pass
             elif path_list[-1] == 'Addresses.cdb':
-                import mikrotik_addressbook as mt
+                import addons.mikrotik_addressbook as mt
                 mt.main(implode(path_list), [symbols[0]])
                 del mt
             elif path_list[-1] == 'wcx_ftp.ini':
-                import totalcommander_ftp_viewer as tcftp
+                import addons.totalcommander_ftp_viewer as tcftp
                 tcftp.main(implode(path_list), [symbols[0]])
                 del tcftp
             else:
-                import file_reader as fr
+                import addons.file_reader as fr
                 fr.main(implode(path_list), [symbols[0]])
                 del fr
             menu_fm = '0'
