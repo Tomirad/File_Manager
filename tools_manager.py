@@ -4,6 +4,7 @@ menu = {
     'file_manager': '💾 Files Manager',
     'wifi_password': '🔓 Listing Wifi Passwords',
     'mikrotik_password': '🔓 Listing Mikrotik Passwords',
+    'totalcommander_password': '🔓 Listing TotalCommander Passwords',
 }
 
 def show_list(menu):
@@ -15,7 +16,7 @@ def show_list(menu):
 if __name__ == '__main__':
     i = 0
     while True:
-        #system('cls')
+        system('cls')
         print("🔍 TOOLS MANAGER 🔍")
         show_list(menu)
         menu_list  = list(menu)
