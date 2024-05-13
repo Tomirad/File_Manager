@@ -1,6 +1,8 @@
 from sys import argv
-from os import scandir, system, path
-from ctypes import windll
+from os import scandir, system, path, name as sys_name
+
+if sys_name == 'nt':
+    from ctypes import windll
 
 import string
 
@@ -71,7 +73,12 @@ elementEmoji = {
 }
 
 last_pathsrc = load_last_pathsrc()
-path_src = replace("C:/Users/Public") if last_pathsrc == None else last_pathsrc
+
+if sys_name == 'nt':
+    default_src = "C:/Users/Public"
+else:
+    default_src = '/home'
+path_src = replace(default_src) if last_pathsrc == None else last_pathsrc
 if len(argv) > 1:
     path_src = replace(argv[1])
 
@@ -150,11 +157,13 @@ def dir_show_elements(dir_path):
             elements.append(obj)
         txt_element(symbols[4], 'Choose file or directory:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     else:
-        len_max_count_number = len(get_drives())
-        for letter in get_drives():
-            i += 1
-            dir_element(i, letter, len_max_count_number, get_icon_element_for_disk())
-            elements.append(letter)
+        len_max_count_number = 0
+        if sys_name == 'nt':
+            len_max_count_number = len(get_drives())
+            for letter in get_drives():
+                i += 1
+                dir_element(i, letter, len_max_count_number, get_icon_element_for_disk())
+                elements.append(letter)
         txt_element(symbols[4], 'Choose letter:', len_max_count_number, symbols[6], elementEmoji['?'] or symbols[2], symbols[7])
     return elements
 
@@ -165,7 +174,7 @@ def main():
     tmp_path_list = path_list
     drive_list = False
     while True:
-        system('cls')
+        # system('cls')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
         file_name = True
         if path.isdir(implode(path_list)):
@@ -207,12 +216,13 @@ def main():
             print('Close Program > exit', f"[{menu_fm}]")
             break
 
+       
         if drive_list is True:
-            print('Change Drive:', f"[{menu_fm}]")
-            tmp_path_list = path_list
-            letter = str(get_drives().__getitem__(int(menu_fm) - 1) + ":")
-            path_list.append(letter)
-            
+            if sys_name == 'nt':
+                print('Change Drive:', f"[{menu_fm}]")
+                tmp_path_list = path_list
+                letter = str(get_drives().__getitem__(int(menu_fm) - 1) + ":")
+                path_list.append(letter)
         elif int(menu_fm) <= 0:
             print('Change Directory > cd ..', f"[{menu_fm}]")
             tmp_path_list = path_list
@@ -226,6 +236,7 @@ def main():
             else:
                 file_name = dir_elements[key].name
                 path_list.append(file_name)
+
 
 if __name__ == '__main__':
     main()
