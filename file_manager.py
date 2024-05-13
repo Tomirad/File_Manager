@@ -78,12 +78,16 @@ if sys_name == 'nt':
     default_src = "C:/Users/Public"
 else:
     default_src = '/home'
+    
+
 path_src = replace(default_src) if last_pathsrc == None else last_pathsrc
 if len(argv) > 1:
     path_src = replace(argv[1])
 
 path_list = []
 for particle in path_src.split('/'):
+    if sys_name != 'nt':
+        path_list.append('/')
     if not particle == '':
         path_list.append(particle)
 
@@ -174,7 +178,10 @@ def main():
     tmp_path_list = path_list
     drive_list = False
     while True:
-        # system('cls')
+        if sys_name == 'nt':
+            system('cls')
+        else:
+            system('clear')
         print(f"{symbols[9]} 💾  SIMPLE FILE MANAGER 💾")
         file_name = True
         if path.isdir(implode(path_list)):
