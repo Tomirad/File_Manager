@@ -86,8 +86,8 @@ if len(argv) > 1:
 
 path_list = []
 for particle in path_src.split('/'):
-    if sys_name != 'nt':
-        path_list.append('/')
+    if sys_name != 'nt' and particle == '':
+        path_list.append('')
     if not particle == '':
         path_list.append(particle)
 
@@ -152,7 +152,7 @@ def dir_show_elements(dir_path):
     src_path = implode(dir_path)
     if path.isdir(src_path):
         len_max_count_number = dir_count_file(dir_path)
-        if len(dir_path) > 1:
+        if len(dir_path) > 1 and dir_path[0] != '/':
             dir_element(0, '..', len_max_count_number, elementEmoji['D'] or symbols[10])
 
         for obj in scandir(src_path):
