@@ -1,3 +1,5 @@
+[![wakatime](https://wakatime.com/badge/user/5b66d141-cfaa-4955-8107-756611f406f9.svg)](https://wakatime.com/@5b66d141-cfaa-4955-8107-756611f406f9)
+
 Simple tools manager & file manager
 
 1. Tools
